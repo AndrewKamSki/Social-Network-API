@@ -38,7 +38,7 @@ const thoughtController = {
     })
     .then(thoughtData => {
         if(!thoughtData) {
-            res.status(404).json({message: 'No thought with this particular ID!'});
+            res.status(404).json({message: 'No user with this particular ID!'});
             return;
         }
         res.json(thoughtData)
@@ -69,11 +69,15 @@ const thoughtController = {
     Thought.findOneAndRemove({ _id: req.params.thoughtId })
       .then((thoughtData) =>
         !thoughtData
-          ? res.status(404).json({ message: 'No thought with that ID' })
-          : Student.deleteMany({ _id: { $in: thoughtData.students } })
+          ? res.status(404).json({
+              message: 'No thoughts with this ID',
+            })
+          : res.json({ message: 'Thought successfully deleted' })
       )
-      .then(() => res.json({ message: 'Thougt deleted!' }))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
 
   // Create a reaction stored in a single Thought's reactions
@@ -97,7 +101,7 @@ const thoughtController = {
   removeReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $pull: { reaction: { reactionId: req.params.reactionId } } },
+      { $pull: { reactions: {reactionId: req.params.reactionId } } },
       { runValidators: true, new: true }
     )
       .then((thoughtData) =>

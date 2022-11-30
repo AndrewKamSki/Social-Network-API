@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const {
-  // Exported functions from user controller
   getAllUsers,
   getUserById,
   createUser,
